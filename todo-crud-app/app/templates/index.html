@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Flask HTMX ALPINE App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <style>
+        body{
+            padding: 20px;
+        }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        tr.htmx-swapping td {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        td, th {
+            border: 1px solid #383737;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Todo List</h1>
+    <form hx-post="/submit" hx-swap="beforeend" hx-target="#new-assignment" class="mb-3">
+        <input type="text" placeholder="Assignment" name="assignment" class="form-control mb-3" />
+        <input type="text" placeholder="Creator" name="creator" class="form-control mb-3" />
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Assignment</th>
+            <th scope="col">Creator</th>
+          </tr>
+        </thead>
+        <tbody id="new-assignment" hx-target="closest tr" hx-swap="outerHTML swap:0.5s">
+            {%for assign in assignments%}
+            <tr>
+                <td>{{assign.Assignment.Assignment}}</td>
+                <td>{{assign.Assignment.Creator}}</td>
+                <td>
+                    <button class="btn btn-primary"
+                        hx-get="/get-edit-form/{{assign.Assignment.assignment_id}}">
+                        Edit Title
+                    </button>
+                </td>
+                <td>
+                    <button hx-delete="/delete/{{assign.Assignment.assignment_id}}" class="btn btn-primary">Delete</button>
+                </td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</body>
+</html>
